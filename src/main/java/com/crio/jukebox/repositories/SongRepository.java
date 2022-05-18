@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.crio.jukebox.entities.Song;
+import com.crio.jukebox.exceptions.SongNotFoundException;
+
 import java.util.stream.Collectors;
 
 public class SongRepository implements ISongRepository{
@@ -53,6 +55,26 @@ public class SongRepository implements ISongRepository{
     @Override
     public Optional<Song> findById(String id) {
         return Optional.ofNullable(songMap.get(id));
+    }
+
+    @Override
+    public List<Song> getAllRequestedSongsbyIds(List<String> songIds) throws SongNotFoundException
+    {
+        List<Song> allRequestedSongs = new ArrayList<>();
+        for(String id: songIds)
+        {
+            Optional<Song> song = findById(id);
+            if(song.isPresent())
+                allRequestedSongs.add(song.get());
+            else
+            {
+                String expMsg = "Song of this id: " + id + " not found in repository !";
+                throw new SongNotFoundException(expMsg);
+                // System.out.println(expMsg);
+            }
+        }
+
+        return allRequestedSongs;
     }
 
     @Override

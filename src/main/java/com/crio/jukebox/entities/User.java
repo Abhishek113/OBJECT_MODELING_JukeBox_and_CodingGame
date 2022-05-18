@@ -2,32 +2,39 @@ package com.crio.jukebox.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class User extends BaseEntity {
 
     private String name;
     private List<Playlist> userPlaylists;
-    private UserPlaylistSongs userPlaylistSongs;
-
+    private UserPlaylistManager userPlaylistManager;
+    // private Playlist activeUserPlaylist;
 
     public User(User user)
     {
         this(user.getId(), user.getName(), user.getAllPlaylists(), user.getUserPlaylistSongs());
     }
 
-    public User(String id, String name)
+    public User(String name)
     {
-        this.id = id;
+        //this.id = id;
         this.name = name;
         userPlaylists = new ArrayList<>();
-        userPlaylistSongs = new UserPlaylistSongs();
+        userPlaylistManager = new UserPlaylistManager();
     }
 
-    public User(String id, String name, List<Playlist> userPlaylists, UserPlaylistSongs userPlaylistSongs)
+    public User(String id, String name, List<Playlist> userPlaylists, UserPlaylistManager userPlaylistManager)
     {
-        this(id, name);
+        this(name, userPlaylists, userPlaylistManager);
+        this.id = id;
+    }
+
+    public User(String name, List<Playlist> userPlaylists, UserPlaylistManager userPlaylistManager)
+    {
+        this(name);
         this.userPlaylists = userPlaylists;
-        this.userPlaylistSongs = userPlaylistSongs;
+        this.userPlaylistManager = userPlaylistManager;
     }
 
     public String getName()
@@ -40,14 +47,36 @@ public class User extends BaseEntity {
         return this.userPlaylists;
     }
 
-    public UserPlaylistSongs getUserPlaylistSongs()
+    public UserPlaylistManager getUserPlaylistSongs()
     {
-        return this.userPlaylistSongs;
+        return this.userPlaylistManager;
     }
 
-    public void addPlaylist()
+    public void setActivePlaylist(Playlist playlist)
     {
-        //TODO: 
+        userPlaylistManager.setActivetPlaylist(playlist);
+    }
+
+    public Optional<Playlist> getActivePlaylist()
+    {
+
+        return userPlaylistManager.getActivePlaylist();
+    }
+
+    public void addPlaylist(Playlist playlist)
+    {
+        this.userPlaylists.add(playlist);
+        addPlaylistSongs(playlist, playlist.getSongs());
+    }
+
+    public void addPlaylistSongs(Playlist playlist, List<Song> songs)
+    {
+        userPlaylistManager.addUserPlaylistSongs(playlist, songs);
+    }
+
+    public void deletePlaylist(Playlist playlist)
+    {
+        userPlaylists.removeIf(p->p.getId().equals(playlist.getId()));
     }
 
     public void createPlaylist()

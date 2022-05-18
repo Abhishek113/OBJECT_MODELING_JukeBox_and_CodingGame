@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import com.crio.jukebox.entities.Playlist;
 import com.crio.jukebox.entities.Song;
+import com.crio.jukebox.exceptions.PlayListNotFoundException;
+
 import java.util.stream.Collectors;
 
 public class PlaylistRepository implements IPlaylistRepository{
@@ -60,7 +62,7 @@ public class PlaylistRepository implements IPlaylistRepository{
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(String id) throws PlayListNotFoundException{
         if(existsById(id))
             playlistMap.remove(id);
     }
@@ -70,18 +72,36 @@ public class PlaylistRepository implements IPlaylistRepository{
         deleteById(entity.getId());
     }
 
+    private void addSongToPlaylist(Playlist playlist, Song song) {
+        playlist.addSong(song);
+    }
+
     @Override
-    public void addSongToPlaylist(Playlist playlist, Song song) {
-        // TODO Auto-generated method stub
+    public Playlist addSongsToPlaylist(Playlist playlist, List<Song> songs) {
+
+        for(Song song: songs)
+        {
+            addSongToPlaylist(playlist, song);
+        }
+
+        return save(playlist);
+    }
+
+    private void removeSongFromPlaylist(Playlist playlist, Song song) {
+        playlist.removeSong(song);
         
     }
 
     @Override
-    public void removeSongFromPlaylist(Playlist playlist, Song song) {
-        // TODO Auto-generated method stub
-        
-    }
+    public Playlist removeSongsFromPlaylist(Playlist playlist, List<Song> songs) {
 
+        for(Song song: songs)
+        {
+            removeSongFromPlaylist(playlist, song);
+        }
+
+        return save(playlist);
+    }
     @Override
     public long count() {
         return playlistMap.size();
