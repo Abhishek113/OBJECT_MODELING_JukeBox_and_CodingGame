@@ -16,7 +16,13 @@ public class Playlist extends BaseEntity {
 
     public Playlist(Playlist playlist)
     {
-        this(playlist.getId(), playlist.getName(), playlist.getSongs(), playlist.getCreator(), playlist.currentlyPlayingSongNumber());
+        this(playlist.getId(), playlist.getName(), playlist.getSongs(), playlist.getCreator(), playlist.getcurrentlyPlayingSongNumber());
+    }
+
+    public Playlist(String id, String name, List<Song> songs, User creator, int currentlyPlayingSongNumber)
+    {
+        this(id, name, songs, creator);
+        this.currentlyPlayingSongNumber = currentlyPlayingSongNumber;
     }
 
     public Playlist(String id, String name, List<Song> songs, User creator)
@@ -157,9 +163,9 @@ public class Playlist extends BaseEntity {
         if(getClass() != obj.getClass())
             return false;
         
-        Song song = (Song)obj;
+        Playlist playlist = (Playlist)obj;
 
-        return this.equals(song);
+        return this.equals(playlist);
         
     }
 
